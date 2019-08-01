@@ -105,8 +105,7 @@ class WebRequestHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps(buf).encode())  # 发送json格式的返回包体
 
         if path == "/addLocation":
-
-            length = int(self.headers.getheader('content-length'))
+            length = int(self.headers.get('Content-Length'))
             message = json.loads(self.rfile.read(length))
 
             message['received'] = 'ok'
