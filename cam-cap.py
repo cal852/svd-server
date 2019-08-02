@@ -2,7 +2,7 @@ import cv2, datetime, os, time, requests, subprocess, argparse
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 
-img_path = "%s%s" % (os.getcwd(), "/images")
+img_path = "/home/pi/images"
 url = 'http://training.socif.co:8000/upload' # deployment
 n = 1
 cams = 1
@@ -198,38 +198,41 @@ if __name__ == "__main__":
             cv2.imwrite(img_file_path2, img2)
 
         else:
-            
-            cam1.capture(rawCap, format="bgr")
-            image = rawCap.array
-            #cam1 = cv2.VideoCapture(0)
+            # picam
+            # cam1.capture(rawCap, format="bgr")
+            # image = rawCap.array
 
-            # if args.resolution == 1080:
-            #     set_1080p(1)
-            # elif args.resolution == 720:
-            #     set_720p(1)
-            # else:
-            #     set_480p(1)
+            cam1 = cv2.VideoCapture(0)
 
-            # ret1, img1 = cam1.read()
+            if args.resolution == 1080:
+                set_1080p(1)
+            elif args.resolution == 720:
+                set_720p(1)
+            else:
+                set_480p(1)
+
+            ret1, img1 = cam1.read()
 
             t_now = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 
-            # cam1.release()
+            cam1.release()
 
-            # if ret1 == True:
-            #     print("Captured image {} from camera 1!".format(n))
-            # else:
-            #     print("Image {} not captured from camera 1!".format(n))
+            if ret1 == True:
+                print("Captured image {} from camera 1!".format(n))
+            else:
+                print("Image {} not captured from camera 1!".format(n))
 
             img_name1 = "minibus_{}.jpg".format(t_now)
             img_file_path1 = os.path.join(img_path, img_name1)
-            cv2.imwrite(img_file_path1, image)
-            rawCap.truncate(0)
+            cv2.imwrite(img_file_path1, img1)
+
+            # raspi cam
+            # rawCap.truncate(0)
 
 
         # check temp
         temp = subprocess.check_output(['vcgencmd', 'measure_temp'])
-        
+
         # send images
         headers = {
             'filename' : img_name1,
@@ -253,23 +256,23 @@ if __name__ == "__main__":
         else:
             print('Image {} not sent!'.format(n))
         
-        time.sleep(sleep_time)  # 10 sec sleep
+        time.sleep(sleep_time)  # 10 sec sleep default
 
         # delete images
         if args.cameras == 3:
             print("Deleting image {} from camera 1!".format(n))
-            os.remove(os.path.join(img_path, img_name1))
+            os.remove(img_file_path1)
             print("Deleting image {} from camera 2!".format(n))
-            os.remove(os.path.join(img_path, img_name2))
+            os.remove(img_file_path2)
             print("Deleting image {} from camera 3!".format(n))
-            os.remove(os.path.join(img_path, img_name3))
+            os.remove(img_file_path3)
         elif args.cameras == 2:
             print("Deleting image {} from camera 1!".format(n))
-            os.remove(os.path.join(img_path, img_name1))
+            os.remove(img_file_path1)
             print("Deleting image {} from camera 2!".format(n))
-            os.remove(os.path.join(img_path, img_name2))
+            os.remove(img_file_path2)
         else:
             print("Deleting image {} from camera 1!".format(n))
-            os.remove(os.path.join(img_path, img_name1))
+            os.remove(img_file_path1)
 
         n += 1
