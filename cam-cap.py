@@ -224,11 +224,12 @@ if __name__ == "__main__":
             img_name1 = "minibus_{}.jpg".format(t_now)
             img_file_path1 = os.path.join(img_path, img_name1)
             cv2.imwrite(img_file_path1, image)
+            rawCap.truncate(0)
+
 
         # check temp
         temp = subprocess.check_output(['vcgencmd', 'measure_temp'])
-
-        print(img_file_path1)
+        
         # send images
         headers = {
             'filename' : img_name1,
