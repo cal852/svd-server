@@ -3,6 +3,7 @@
 ## Prerequisites
 
 Python 3 (Server & Client)
+
 Raspberry Pi (Client)
 
 ## Quick start
